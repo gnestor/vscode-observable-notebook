@@ -1,0 +1,110 @@
+{
+	"id": "84060a30e9d58db7",
+	"slug": "table",
+	"trashed": false,
+	"description": "",
+	"likes": 7,
+	"publish_level": "public",
+	"forks": 0,
+	"fork_of": null,
+	"update_time": "2021-11-04T06:31:20.349Z",
+	"publish_time": "2020-03-17T14:10:36.491Z",
+	"publish_version": 435,
+	"latest_version": 435,
+	"thumbnail": "951c4896e4f6051a89b21834dd1d1d01fba5e01879b140274eb8fabd1b1bc94c",
+	"default_thumbnail": "951c4896e4f6051a89b21834dd1d1d01fba5e01879b140274eb8fabd1b1bc94c",
+	"roles": [],
+	"sharing": null,
+	"owner": {
+		"id": "0ae759681a97e281",
+		"github_login": "gnestor",
+		"avatar_url": "https://avatars3.githubusercontent.com/u/512354?v=4",
+		"login": "gnestor",
+		"name": "Grant Nestor",
+		"bio": "Owner of Hammies, former Jupyter core developer and co-lead of Jupyter Notebook and JupyterLab teams",
+		"home_url": "https://www.hammies.com",
+		"type": "individual"
+	},
+	"creator": {
+		"id": "0ae759681a97e281",
+		"github_login": "gnestor",
+		"avatar_url": "https://avatars3.githubusercontent.com/u/512354?v=4",
+		"login": "gnestor",
+		"name": "Grant Nestor",
+		"bio": "Owner of Hammies, former Jupyter core developer and co-lead of Jupyter Notebook and JupyterLab teams",
+		"home_url": "https://www.hammies.com"
+	},
+	"collections": [
+		{
+			"id": "9e0b4f1f015f1a5e",
+			"type": "public",
+			"slug": "utilities",
+			"title": "Libraries",
+			"description": "",
+			"update_time": "2020-03-13T17:19:04.071Z",
+			"pinned": false,
+			"ordered": false,
+			"custom_thumbnail": null,
+			"thumbnail": "fca491aa2586b3c340897f4b84e23d1c57423b8758c18f3cd7f34ae9a20f8149",
+			"listing_count": 21,
+			"parent_collection_count": 0,
+			"owner": {
+				"id": "0ae759681a97e281",
+				"github_login": "gnestor",
+				"avatar_url": "https://avatars3.githubusercontent.com/u/512354?v=4",
+				"login": "gnestor",
+				"name": "Grant Nestor",
+				"bio": "Owner of Hammies, former Jupyter core developer and co-lead of Jupyter Notebook and JupyterLab teams",
+				"home_url": "https://www.hammies.com",
+				"type": "individual"
+			}
+		}
+	],
+	"files": [],
+	"comments": [],
+	"commenting_lock": null,
+	"suggestion_from": null,
+	"suggestions_to": [],
+	"version": 435,
+	"title": "Handsontable for Observable",
+	"license": null,
+	"copyright": "",
+	"nodes": [
+		{
+			"id": 0,
+			"value": "md`# Handsontable for Observable\n\nDemo: https://observablehq.com/@gnestor/table-demo\n\nTable utilities: https://observablehq.com/@gnestor/table-utilities\n\nHandsontable docs: https://handsontable.com/docs`",
+			"pinned": false,
+			"mode": "js",
+			"data": null
+		},
+		{
+			"id": 36,
+			"value": "table = (data = [], options = {}) => {\n  if (data.length === 0) return html``;\n  const columnHeaders = [\n    ...data.reduce((result, row) => {\n      Object.keys(row).forEach((key) => {\n        result.add(key);\n      });\n      return result;\n    }, new Set())\n  ];\n  let columns = columnHeaders.map((columnHeader) => ({\n    data: columnHeader\n  }));\n  if (options.sort) {\n    const index = columnHeaders.indexOf(options.sort) || 0;\n    options.columnSorting = {\n      initialConfig: { column: index, sortOrder: options.sortOrder || \"asc\" }\n    };\n    delete options.sort;\n  }\n  if (options.columns) {\n    if (typeof options.columns === \"function\") {\n      columns = options.columns(columns);\n    } else {\n      columns = columns.map((column) => {\n        const updatedColumn = options.columns.find(\n          (_column) => _column.data === column.data\n        );\n        if (updatedColumn) {\n          return { ...updatedColumn, ...column };\n        }\n        return column;\n      });\n    }\n    delete options.columns;\n  }\n  return handsontable({\n    data,\n    columns,\n    colHeaders: columnHeaders,\n    columnSorting: true,\n    // manualColumnMove: true,\n    // manualColumnResize: true,\n    // dropdownMenu: true,\n    // filters: true,\n    ...options\n  });\n}",
+			"pinned": true,
+			"mode": "js",
+			"data": null
+		},
+		{
+			"id": 404,
+			"value": "md`## Appendix`",
+			"pinned": false,
+			"mode": "js",
+			"data": null
+		},
+		{
+			"id": 88,
+			"value": "handsontable = (options = {}, update) => {\n  const height = Math.min(options.data.length * 22 + 22, 600);\n  const element = html`<div style=\"padding-bottom: 15px; ${\n    options.style || \"\"\n  };\" />`;\n  const hot = Handsontable(element, {\n    width: \"100%\",\n    height,\n    licenseKey: \"non-commercial-and-evaluation\",\n    data: options.data,\n    outsideClickDeselects: false,\n    ...options\n  });\n  const updateElement = () => {\n    element.value = hot.getSourceData() || [];\n    element.dispatchEvent(new CustomEvent(\"input\"));\n  };\n  // const hooks = Object.entries(options).reduce((result, [key, value]) => {\n  //   if (typeof value === 'function') {\n  //     return { ...result, [key]: (...args) => value(...args, hot) };\n  //   }\n  // }, {});\n  hot.updateSettings({\n    // ...hooks,\n    afterRender: () => {\n      hot.view.wt.wtOverlays.updateMainScrollableElements();\n    },\n    // beforeChange: (changes, source) => {\n    //   updateElement(changes, source);\n    // },\n    afterChange: (changes, source) => {\n      updateElement(changes, source);\n    }\n    // afterColumnMove: (column, target) => {\n    //   if (options.afterColumnMove) {\n    //     options.afterColumnMove(column, target);\n    //   }\n    //   updateElement();\n    // },\n    // afterColumnResize: (currentColumn, newSize, isDoubleClick) => {\n    //   if (options.afterColumnResize) {\n    //     options.afterColumnResize(currentColumn, newSize, isDoubleClick);\n    //   }\n    //   updateElement();\n    // },\n    // afterColumnSort: (currentSortConfig, destinationSortConfig) => {\n    //   if (options.afterColumnSort) {\n    //     options.afterColumnSort(currentSortConfig, destinationSortConfig);\n    //   }\n    //   updateElement();\n    // },\n    // afterFilter: conditionsStack => {\n    //   if (options.afterFilter) {\n    //     options.afterFilter(conditionsStack);\n    //   }\n    //   updateElement();\n    // }\n  });\n  element.hot = hot;\n  element.value = hot.getSourceData() || [];\n  invalidation.then(() => element.hot.destroy());\n  setTimeout(() => {\n    // element.hot.render();\n    element.hot.refreshDimensions();\n  }, 30);\n  return element;\n}",
+			"pinned": true,
+			"mode": "js",
+			"data": null
+		},
+		{
+			"id": 115,
+			"value": "Handsontable = {\n  const styles = html`<link href=\"//unpkg.com/handsontable/dist/handsontable.full.min.css\" rel=\"stylesheet\" media=\"screen\">`;\n  document.head.appendChild(styles);\n  return require('handsontable');\n}",
+			"pinned": true,
+			"mode": "js",
+			"data": null
+		}
+	],
+	"resolutions": []
+}

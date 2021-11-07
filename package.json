@@ -1,0 +1,77 @@
+{
+	"name": "vscode-observable-notebook",
+	"publisher": "gnestor",
+	"displayName": "Observable Notebook extension for VS Code",
+	"description": "Create, open, and edit Observable notebooks in VS Code",
+	"version": "0.0.1",
+	"repository": {
+		"url": "https://github.com/gnestor/vscode-observable-notebook"
+	},
+	"main": "./dist/extension.js",
+	"scripts": {
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"vscode:prepublish": "npm run compile"
+	},
+	"dependencies": {
+		"@alex.garcia/unofficial-observablehq-compiler": "^0.6.0-alpha.9",
+		"@observablehq/runtime": "^4.18.0",
+		"@observablehq/stdlib": "^3.15.0"
+	},
+	"devDependencies": {
+		"@types/node": "^13.11.0",
+		"@types/vscode": "1.62.0",
+		"typescript": "^4.4.4",
+		"vscode-test": "^1.6.1"
+	},
+	"engines": {
+		"vscode": "^1.57.0"
+	},
+	"icon": "notebook.png",
+	"categories": [
+		"Notebooks"
+	],
+	"activationEvents": [
+		"onNotebook:observable-notebook",
+		"onCommand:observable-notebook.newNotebook"
+	],
+	"contributes": {
+		"startEntries": [
+			{
+				"title": "Observable Notebook",
+				"description": "Create, open, and edit Observable notebooks in VS Code",
+				"command": "observable-notebook.newNotebook"
+			}
+		],
+		"notebooks": [
+			{
+				"type": "observable-notebook",
+				"displayName": "Observable Notebook",
+				"priority": "option",
+				"selector": [
+					{
+						"filenamePattern": "*.js"
+					}
+				]
+			}
+		],
+		"commands": [
+			{
+				"title": "New Observable Notebook",
+				"command": "observable-notebook.newNotebook"
+			},
+			{
+				"title": "Open Observable Notebook",
+				"command": "observable-notebook.openNotebook"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "observable-notebook.openNotebook",
+					"when": "editorLangId == javascript"
+				}
+			]
+		}
+	}
+}
